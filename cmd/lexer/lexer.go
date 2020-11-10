@@ -4,21 +4,22 @@ package lexer
 
 import "monkeyc/cmd/token"
 
+//! Lexer構造体
 type Lexer struct {
 	input        string
-	position     int  // 入力に置ける現在の位置
-	readPosition int  // これから読み込む位置
-	ch           byte // 現在検査中の文字
+	position     int  //* 入力に置ける現在の位置
+	readPosition int  //* これから読み込む位置
+	ch           byte //* 現在検査中の文字
 }
 
-// Lexerの初期化に使う関数
+//! Lexerの初期化に使う関数
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar()
 	return l
 }
 
-//
+//*
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
@@ -31,12 +32,12 @@ func (l *Lexer) readChar() {
 
 }
 
-//
+//*
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
-// 現在の文字を検査して、次の文字をセット(readChar())してから返す
+//! 現在の文字を検査して、次の文字をセット(readChar())してから返す
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhitespace()
@@ -98,8 +99,8 @@ func (l *Lexer) NextToken() token.Token {
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifer()
-			tok.Type = token.LookupIdent(tok.Literal) // ここで予約語に変換している
-			return tok                                // readIdentiferのなかのreadCharで次の文字に進んでいる
+			tok.Type = token.LookupIdent(tok.Literal) //* ここで予約語に変換している
+			return tok                                //* readIdentiferのなかのreadCharで次の文字に進んでいる
 		} else if isDigit(l.ch) {
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
@@ -113,6 +114,7 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
+//*
 func (l *Lexer) readIdentifer() string {
 	position := l.position
 	for isLetter(l.ch) {
@@ -121,17 +123,20 @@ func (l *Lexer) readIdentifer() string {
 	return l.input[position:l.position] // positionからl.positionまでの文字列のスライス
 }
 
+//*
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 
 }
 
+//*
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+//*
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
@@ -140,6 +145,7 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
+//*
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
@@ -152,6 +158,7 @@ func (l *Lexer) peekChar() byte {
 	}
 }
 
+//*
 func (l *Lexer) readString() string {
 	position := l.position + 1
 	for {
