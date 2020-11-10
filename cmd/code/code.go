@@ -19,6 +19,8 @@ const (
 )
 
 //! Definition is struct of opcode definition
+//! Name is
+//! OperandWiths is
 type Definition struct {
 	Name          string
 	OperandWidths []int //* number of bytes each operand takes up
